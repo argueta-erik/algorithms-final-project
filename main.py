@@ -19,6 +19,7 @@ from util import (
 
 # ---------------------------------------------------------------------------
 # TEAM HOOK – Campus Navigator
+import campus_navigator
 # Uncomment and adjust once campus_navigator.py is ready.
 # ---------------------------------------------------------------------------
 # from campus_navigator import open_campus_navigator
@@ -97,7 +98,7 @@ class MainMenu(tk.Frame):
         nav_frame.pack()
 
         buttons = [
-            ("Campus Navigator",  lambda: _stub("campus_navigator")),
+            ("Campus Navigator",   lambda: campus_navigator.open_campus_navigator(self.master)),
             ("Study Planner",      lambda: _stub("study_planner")),
             ("Notes Search",       lambda: _stub("notes_search")),
         ]
