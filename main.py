@@ -35,7 +35,7 @@ from util import (
 # TEAM HOOK – Notes Search
 # Uncomment and adjust once notes_search.py is ready.
 # ---------------------------------------------------------------------------
-# from notes_search import open_notes_search
+from notes_search import open_notes_search
 
 
 # ---------------------------------------------------------------------------
