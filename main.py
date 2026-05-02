@@ -19,7 +19,7 @@ from util import (
 
 # ---------------------------------------------------------------------------
 # TEAM HOOK – Campus Navigator
-import campus_navigator
+import campus_navigator as campus_navigator
 # Uncomment and adjust once campus_navigator.py is ready.
 # ---------------------------------------------------------------------------
 # from campus_navigator import open_campus_navigator
