@@ -28,7 +28,7 @@ from util import (
 # TEAM HOOK – Study Planner
 # Uncomment and adjust once study_planner.py is ready.
 # ---------------------------------------------------------------------------
-# from study_planner import open_study_planner
+from study_planner import open_study_planner
 
 
 # ---------------------------------------------------------------------------
@@ -98,7 +98,7 @@ class MainMenu(tk.Frame):
 
         buttons = [
             ("Campus Navigator",  lambda: _stub("campus_navigator")),
-            ("Study Planner",      lambda: _stub("study_planner")),
+            ("Study Planner",      lambda: open_study_planner(self.master)),
             ("Notes Search",       lambda: _stub("notes_search")),
         ]
 
