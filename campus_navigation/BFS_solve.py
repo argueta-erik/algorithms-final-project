@@ -7,8 +7,6 @@ def solve_bfs(start, end, names=False):
     found = False
     visited_count = 0
     current = None
-    start = start-1
-    end = end-1
     #start counting time and search for path to end
     start_time = perf_counter()
     paths = {start:start}

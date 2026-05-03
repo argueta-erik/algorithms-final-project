@@ -1,6 +1,7 @@
 import heapq
 import campus_navigation.Buildings as B
-def solve_dijkstra(graph, source, goal):
+def solve_dijkstra(source, goal):
+    graph = B.buildings_list
     n = len(graph)
     dist = [float('inf')]*n
     dist[source-1] = 0

@@ -19,6 +19,7 @@
 # ─────────────────────────────────────────────────────────────────────────────
 
 import tkinter as tk
+from tkinter import ttk
 from util import COLORS, FONTS, PADDING, configure_window, make_label, make_nav_button
 #from enum import IntEnum
 from campus_navigation.BFS_solve import solve_bfs
@@ -26,94 +27,133 @@ from campus_navigation.DFS_solve import solve_dfs
 from campus_navigation.Dijkstra_solve import solve_dijkstra
 from campus_navigation.Prim_solve import prim_mst
 import campus_navigation.Buildings as B
+def reset_edges(canvas, edges):
+    for edge in edges.values():
+        canvas.itemconfig(edge, fill=COLORS["accent"])
 
-def on_resize(event, building_nodes, building_node_locations, edges, edge_coords, edges_by_coord, node_names, canvas):
+def on_resize(building_nodes, building_node_locations, edges, weights, node_names, canvas, event=None):
     node_size = 25
-    edges_by_coord.clear()
-    w, h = event.width, event.height
-    for i, edge_coord in enumerate(edge_coords):
-        edge = edges[i]
-        edge_coords[edge_coord] = ((building_node_locations[edge_coord[0]][0])*w/800, (building_node_locations[edge_coord[0]][1])*h/508, (building_node_locations[edge_coord[1]][0])*w/800, (building_node_locations[edge_coord[1]][1])*h/508)
-        edge_coord = edge_coords[edge_coord]
-        print(i, edge_coord)
-        edges_by_coord[edge_coord] = edge
-        canvas.coords(edge, edge_coord[0], edge_coord[1], edge_coord[2], edge_coord[3])#(building_node_locations[edge_coord[0]][0])*w/800, (building_node_locations[edge_coord[0]][1])*h/508, (building_node_locations[edge_coord[1]][0])*w/800, (building_node_locations[edge_coord[1]][1])*h/508)
-        #canvas.coords(edge, 50, 50, 100, 100)
+    if event:
+        w, h = event.width, event.height
+    else:
+        w, h = 800, 508
+    #edges
+    for edge in edges:
+        start = edge[0]
+        end = edge[1]
+        dirx = (building_node_locations[start][0])*w - (building_node_locations[end][0])*w
+        diry = (building_node_locations[start][1])*h - (building_node_locations[end][1])*h
+        unit_dir = pow(dirx**2 + diry**2, 0.5)
+        weight_offset_x = (diry/unit_dir)*15
+        weight_offset_y = (dirx/unit_dir)*15
+        canvas.coords(edges[edge], ((building_node_locations[start][0])*w, (building_node_locations[start][1])*h, (building_node_locations[end][0])*w, (building_node_locations[end][1])*h))
+        canvas.coords(weights[edges[edge]], building_node_locations[start][0]*w - (dirx)/2 + weight_offset_x, building_node_locations[start][1]*h - (diry)/2 - weight_offset_y)
+    #nodes and text
     for i in range(0, len(building_nodes)):
         building = building_node_locations[i]
         node = building_nodes[i]
         text = node_names[i]
-        canvas.coords(node, (building[0])*(w/800)-node_size, (building[1])*(h/508)-node_size, (building[0])*(w/800)+node_size, (building[1])*(h/508)+node_size)
-        canvas.coords(text, building[0]*w/800, building[1]*h/508)
-        canvas.itemconfig(text, text=B.Buildings(i+1).name)
+        canvas.coords(node, (building[0])*(w)-node_size, (building[1])*(h)-node_size, (building[0])*(w)+node_size, (building[1])*(h)+node_size)
+        canvas.coords(text, building[0]*w, building[1]*h)
 
-def oval_on_left_click(event, node, building_nodes, start_and_end):
-    print(building_nodes.index(node))
-    print(building_nodes)
+def oval_on_left_click(node, building_nodes, start_and_end, canvas):
+    canvas.itemconfig(building_nodes[start_and_end[0]], fill=COLORS["accent"])
     start_and_end[0] = building_nodes.index(node)
-def oval_on_right_click(event, node, building_nodes, start_and_end):
-    print(building_nodes.index(node))
-    start_and_end[1] = building_nodes.index(node)
+    canvas.itemconfig(node, fill=COLORS["accent_dark"])
 
-def on_start(building_nodes, building_node_locations, edges, edge_coords, edges_by_coord, node_names, canvas):
-    node_size = 25
-    w, h = 800, 508
-    edges_by_coord.clear()
-    for i, edge_coord in enumerate(edge_coords):
-        edge = edges[i]
-        edge_coords[edge_coord] = ((building_node_locations[edge_coord[0]][0])*w/800, (building_node_locations[edge_coord[0]][1])*h/508, (building_node_locations[edge_coord[1]][0])*w/800, (building_node_locations[edge_coord[1]][1])*h/508)
-        edge_coord = edge_coords[edge_coord]
-        print(i, edge_coord)
-        edges_by_coord[edge_coord] = canvas.coords(edge, edge_coord[0], edge_coord[1], edge_coord[2], edge_coord[3])#(building_node_locations[edge_coord[0]][0])*w/800, (building_node_locations[edge_coord[0]][1])*h/508, (building_node_locations[edge_coord[1]][0])*w/800, (building_node_locations[edge_coord[1]][1])*h/508)
-        #canvas.coords(edge, 50, 50, 100, 100)
-    for i in range(0, len(building_nodes)):
-        building = building_node_locations[i]
-        node = building_nodes[i]
-        text = node_names[i]
-        canvas.coords(node, (building[0])*(w/800)-node_size, (building[1])*(h/508)-node_size, (building[0])*(w/800)+node_size, (building[1])*(h/508)+node_size)
-        canvas.coords(text, building[0]*w/800, building[1]*h/508)
-        canvas.itemconfig(text, text=B.Buildings(i+1).name)
-        
-def BFS(canvas, edge_coords, edges_by_coord, start_and_end):
-    print(start_and_end)
-    path_info = solve_bfs(start_and_end[0]+1, start_and_end[1]+1)
-    print(path_info)
-    path = path_info[0]
+def oval_on_right_click(node, building_nodes, start_and_end, canvas):
+    canvas.itemconfig(building_nodes[start_and_end[1]], fill=COLORS["accent"])
+    start_and_end[1] = building_nodes.index(node)
+    canvas.itemconfig(node, fill=COLORS["accent_dark"])
+
+def edge_on_enter(edge, show_weights, canvas):
+    if show_weights.get():
+        return None
+    canvas.itemconfig(edge, state='normal')
+
+def edge_on_leave(edge, show_weights, canvas):
+    if show_weights.get():
+        return None
+    canvas.itemconfig(edge, state='hidden')
+
+def toggle_weights(weights, show_weights, canvas):
+    print(show_weights.get())
+    if show_weights.get():
+        for weight in weights.values():
+            canvas.itemconfig(weight, state='normal')
+    else:
+        for weight in weights.values():
+            canvas.itemconfig(weight, state='hidden')
+
+def BFS(canvas, edges, start_and_end):
+    path = solve_bfs(*start_and_end)[0]
+    reset_edges(canvas, edges)
+    #recolor lines on path
     for nodes in zip(path[0::1], path[1::1]):
-        print(path_info[0])
-        print(nodes)
+        #try to get edge both ways because only one actually exists
         try:
-            edge = edges_by_coord[edge_coords[nodes]]
+            edge = edges[nodes]
         except KeyError:
-            edge = edges_by_coord[edge_coords[(nodes[1],nodes[0])]]
-        #canvas.create_line(edge[0], edge[1], edge[2], edge[3], fill="orange")
+            edge = edges[(nodes[1],nodes[0])]
         canvas.itemconfig(edge, fill="orange")
         
-def Prim(canvas, edge_coords, edges_by_coord, start_and_end):
-    path_info = prim_mst(start_and_end[0]+1)
-    path = path_info[0]
+def Prim(canvas, edges, start_and_end):
+    path = prim_mst(start_and_end[0])[0]
+    reset_edges(canvas, edges)
+    #recolor lines on path
     for start, end, _ in path:
         nodes = (start,end)
-        print(path_info[0])
-        print(nodes)
+        #try to get edge both ways because only one actually exists
         try:
-            edge = edges_by_coord[edge_coords[nodes]]
+            edge = edges[nodes]
         except KeyError:
-            edge = edges_by_coord[edge_coords[(nodes[1],nodes[0])]]
-        #canvas.create_line(edge[0], edge[1], edge[2], edge[3], fill="orange")
+            edge = edges[(nodes[1],nodes[0])]
+
         canvas.itemconfig(edge, fill="orange")
+
+def DFS(canvas, edges, start_and_end):
+    path = solve_dfs(*start_and_end)[0]
+    reset_edges(canvas, edges)
+    #recolor lines on path
+    for nodes in zip(path[0::1], path[1::1]):
+        #try to get edge both ways because only one actually exists
+        try:
+            edge = edges[nodes]
+        except KeyError:
+            edge = edges[(nodes[1],nodes[0])]
+        canvas.itemconfig(edge, fill="orange")
+
+def Dijkstra(canvas, edges, start_and_end):
+    print(solve_dijkstra(*start_and_end))
+
 
 def open_campus_navigator(master: tk.Tk) -> None:
 
-    """Open this module in a new Toplevel window."""
-    building_node_locations = [(400,150), (350,50), (450,50),(650,100), (750, 100), (550, 150), (550, 250), (550, 350), (550,450), (400, 450), (400, 350), (300, 250), (250, 150), (100, 150), (150, 50)]
+    '''relevant variable declarations'''
+    building_node_locations = [(400,150), #PL
+                               (350,50), #KH
+                               (450,50), #HC
+                               (650,100), #E
+                               (750, 100), #CS
+                               (550, 150), #EC
+                               (550, 250), #H
+                               (550, 350), #GH
+                               (550,450), #LDH
+                               (400, 450), #DBH
+                               (400, 350), #MCH
+                               (300, 250), #CPA
+                               (100, 150), #TS
+                               (250, 150), #TSU
+                               (150, 50)] #SRC
+    #turning coords to ratios to be multiplied by canvas size when made
+    building_node_locations = [(x/800, y/508) for x,y in building_node_locations]
     building_nodes = []
     node_names = []
-    edge_coords = {}
-    edges = []
+    edges = {}
+    weights = {}
     start_and_end = [0, 0]
-    edges_by_coord = {}
-    node_size = 25
+    show_weights = tk.BooleanVar()
+    """Open this module in a new Toplevel window."""
     win = tk.Toplevel(master)
     configure_window(win, title="Module Name", width=800, height=560)
     # ── header bar ────────────────────────────────────────────────────────────
@@ -146,34 +186,45 @@ def open_campus_navigator(master: tk.Tk) -> None:
 
     # ── content area ──────────────────────────────────────────────────────────
     content = tk.Frame(win, bg=COLORS["bg_dark"])
-    content.pack(fill="both", expand=True)#, padx=PADDING["window"], pady=PADDING["window"])
+    content.pack(fill="both", expand=True)
 
     canvas = tk.Canvas(content, bg=COLORS["bg_dark"], borderwidth=0, highlightthickness=0)
     canvas.pack(expand=True, fill='both')
 
-    for startpoint in range(0, len(B.buildings_list)):
-        start_list = B.buildings_list[startpoint]
-        for endpoint, _ in start_list:
-            if not (endpoint, startpoint) in edge_coords:
-                edge_coords[(startpoint, endpoint)] = None
-    
-    for edge in edge_coords:
-        edges.append(canvas.create_line(0,0,0,0, fill=COLORS["accent"]))
+    #finding unique edges
+    for start in range(0, len(B.buildings_list)):
+        start_list = B.buildings_list[start]
+        for end, w in start_list:
+            if not (end, start) in edges:
+                edges[(start, end)] = canvas.create_line(0,0,0,0, fill=COLORS["accent"])
+                print(B.buildings_list[start][1])
+                weights[edges[(start,end)]] = canvas.create_text(0,0, text=w, fill=COLORS["text_primary"], state='hidden')
 
-    for node in building_node_locations:
-        building_nodes.append(canvas.create_oval(0,0,0,0,fill=COLORS["accent"], activefill=COLORS["accent_dark"]))#node[0]-node_size, node[1]-node_size, node[0]+node_size, node[1]+node_size, fill=COLORS["accent"]))
-        node_names.append(canvas.create_text(0,0))
-    
+        for edge in edges.values():
+            canvas.tag_bind(edge, "<Enter>", lambda event, id=weights[edge]: edge_on_enter(id, show_weights, canvas))
+            canvas.tag_bind(edge, "<Leave>", lambda event, id=weights[edge]: edge_on_leave(id, show_weights, canvas))
+
+    #initializing nodes and text
+    for i in range(0, len(building_node_locations)):
+        building_nodes.append(canvas.create_oval(0,0,0,0,fill=COLORS["accent"], activefill=COLORS["accent_dark"]))
+        node_names.append(canvas.create_text(0,0, text=B.Buildings(i+1).name))
+    #putting click events on nodes
     for node in building_nodes:
-        canvas.tag_bind(node, "<Button-1>", lambda event, id=node: oval_on_left_click(event, id, building_nodes, start_and_end))
-        canvas.tag_bind(node, "<Button-3>", lambda event, id=node: oval_on_right_click(event, id, building_nodes, start_and_end))
-    on_start(building_nodes, building_node_locations, edges, edge_coords, edges_by_coord, node_names, canvas)
-    canvas.bind("<Configure>", lambda event: on_resize(event, building_nodes, building_node_locations, edges, edge_coords, edges_by_coord, node_names, canvas))
-    buttonPrim = tk.Button(header, text="Prim", command= lambda: Prim(canvas, edge_coords, edges_by_coord, start_and_end))
-    buttonBFS = tk.Button(header, text="BFS", command= lambda: BFS(canvas, edge_coords, edges_by_coord, start_and_end))
-
-    buttonPrim.pack()
-    buttonBFS.pack()
+        canvas.tag_bind(node, "<Button-1>", lambda event, id=node: oval_on_left_click(id, building_nodes, start_and_end, canvas))
+        canvas.tag_bind(node, "<Button-3>", lambda event, id=node: oval_on_right_click(id, building_nodes, start_and_end, canvas))
+    #using make positions and sizes change when window size does
+    canvas.bind("<Configure>", lambda event: on_resize(building_nodes, building_node_locations, edges, weights, node_names, canvas, event))
+    #function buttons
+    buttonPrim = tk.Button(header, text="Prim", command= lambda: Prim(canvas, edges, start_and_end))
+    buttonBFS = tk.Button(header, text="BFS", command= lambda: BFS(canvas, edges, start_and_end))
+    buttonDFS = tk.Button(header, text="DFS", command= lambda: DFS(canvas, edges, start_and_end))
+    buttonDijkstra = tk.Button(header, text="Dijkstra", command= lambda: Dijkstra(canvas, edges, start_and_end))
+    buttonDFS.pack(side=tk.LEFT)
+    buttonPrim.pack(side=tk.LEFT)
+    buttonBFS.pack(side=tk.LEFT)
+    buttonDijkstra.pack(side=tk.LEFT)
+    toggle_btn = ttk.Checkbutton(canvas, text="show weights", onvalue=True, offvalue=False, variable=show_weights, command= lambda: toggle_weights(weights, show_weights, canvas))
+    toggle_btn.pack()
 if __name__ == "__main__":
     root = tk.Tk()
     configure_window(root, title="CampusNavigator", width=800, height=560)
