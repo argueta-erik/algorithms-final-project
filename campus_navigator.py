@@ -20,6 +20,7 @@
 
 import tkinter as tk
 from tkinter import ttk
+import time
 from util import COLORS, FONTS, PADDING, configure_window, make_label, make_nav_button
 #from enum import IntEnum
 from campus_navigation.BFS_solve import solve_bfs
@@ -31,13 +32,13 @@ def reset_edges(canvas, edges):
     for edge in edges.values():
         canvas.itemconfig(edge, fill=COLORS["accent"])
 
-def on_resize(building_nodes, building_node_locations, edges, weights, node_names, canvas, event=None):
+def on_resize(building_nodes, building_node_locations, edges, weights, node_names, info_text, canvas, event=None):
     node_size = 25
     if event:
         w, h = event.width, event.height
     else:
         w, h = 800, 508
-    #edges
+    #edges and weights
     for edge in edges:
         start = edge[0]
         end = edge[1]
@@ -55,13 +56,14 @@ def on_resize(building_nodes, building_node_locations, edges, weights, node_name
         text = node_names[i]
         canvas.coords(node, (building[0])*(w)-node_size, (building[1])*(h)-node_size, (building[0])*(w)+node_size, (building[1])*(h)+node_size)
         canvas.coords(text, building[0]*w, building[1]*h)
+        canvas.coords(info_text, w-100, 25)
 
-def oval_on_left_click(node, building_nodes, start_and_end, canvas):
+def oval_on_left_click(node, building_nodes, info_text, start_and_end, canvas):
     canvas.itemconfig(building_nodes[start_and_end[0]], fill=COLORS["accent"])
     start_and_end[0] = building_nodes.index(node)
     canvas.itemconfig(node, fill=COLORS["accent_dark"])
 
-def oval_on_right_click(node, building_nodes, start_and_end, canvas):
+def oval_on_right_click(node, building_nodes, info_text, start_and_end, canvas):
     canvas.itemconfig(building_nodes[start_and_end[1]], fill=COLORS["accent"])
     start_and_end[1] = building_nodes.index(node)
     canvas.itemconfig(node, fill=COLORS["accent_dark"])
@@ -85,8 +87,9 @@ def toggle_weights(weights, show_weights, canvas):
         for weight in weights.values():
             canvas.itemconfig(weight, state='hidden')
 
-def BFS(canvas, edges, start_and_end):
-    path = solve_bfs(*start_and_end)[0]
+def BFS(canvas, edges, info_text, start_and_end):
+    info = solve_bfs(*start_and_end)
+    path = info[0]
     reset_edges(canvas, edges)
     #recolor lines on path
     for nodes in zip(path[0::1], path[1::1]):
@@ -96,10 +99,14 @@ def BFS(canvas, edges, start_and_end):
         except KeyError:
             edge = edges[(nodes[1],nodes[0])]
         canvas.itemconfig(edge, fill="orange")
+        canvas.itemconfig(info_text, text=f'Buildings Checked: {info[1]}\nBuildings On Path: {len(path)}')
         
-def Prim(canvas, edges, start_and_end):
-    path = prim_mst(start_and_end[0])[0]
+def Prim(canvas, edges, info_text, start_and_end):
+    info = prim_mst(start_and_end[0])
+    path = info[0]
     reset_edges(canvas, edges)
+    canvas.itemconfig(info_text, text=f'Total Distance: {info[1]}\nConnected: {info[2]}')
+
     #recolor lines on path
     for start, end, _ in path:
         nodes = (start,end)
@@ -111,10 +118,44 @@ def Prim(canvas, edges, start_and_end):
 
         canvas.itemconfig(edge, fill="orange")
 
-def DFS(canvas, edges, start_and_end):
-    path = solve_dfs(*start_and_end)[0]
+def edge_color(path, edges, index, canvas):
+    nodes = path[index]
+    try:
+        edge = edges[nodes]
+    except KeyError:
+        edge = edges[(nodes[1],nodes[0])]
+
+    canvas.itemconfig(edge, fill="orange")
+
+    if index < len(path)-1:
+        canvas.after(500, lambda: edge_color(path, edges, index+1, canvas))
+def final_path_DFS(path, edges, canvas):
+        for nodes in zip(path[0::1], path[1::1]):
+            #try to get edge both ways because only one actually exists
+            try:
+                edge = edges[nodes]
+            except KeyError:
+                edge = edges[(nodes[1],nodes[0])]
+            canvas.itemconfig(edge, fill="red")
+
+def DFS(canvas, edges, info_text, root, start_and_end):
+    info = solve_dfs(*start_and_end)
+    path = info[0]
+    visited_count = info[1]
+    order = info[2]
     reset_edges(canvas, edges)
-    #recolor lines on path
+    #recolor lines on main path
+    #recursive function to build search path
+    edge_color(order, edges, 1, canvas)
+    #call final path after delay that should be 500ms after the path is done
+    canvas.after(500*(len(order)-1), lambda: final_path_DFS(path, edges, canvas))
+    canvas.itemconfig(info_text, text=f'Checked Buildings: {visited_count}')
+def Dijkstra(canvas, edges, info_text, start_and_end):
+    info = solve_dijkstra(*start_and_end)
+    path = info[1]
+    reset_edges(canvas, edges)
+    canvas.itemconfig(info_text, text=f'Total Distance: {info[0]}')
+
     for nodes in zip(path[0::1], path[1::1]):
         #try to get edge both ways because only one actually exists
         try:
@@ -122,10 +163,6 @@ def DFS(canvas, edges, start_and_end):
         except KeyError:
             edge = edges[(nodes[1],nodes[0])]
         canvas.itemconfig(edge, fill="orange")
-
-def Dijkstra(canvas, edges, start_and_end):
-    print(solve_dijkstra(*start_and_end))
-
 
 def open_campus_navigator(master: tk.Tk) -> None:
 
@@ -160,7 +197,6 @@ def open_campus_navigator(master: tk.Tk) -> None:
     header = tk.Frame(win, bg=COLORS["bg_panel"], height=52)
     header.pack(fill="x")
     header.pack_propagate(False)
-
     tk.Label(
         header,
         text="  Campus Navigator",
@@ -190,7 +226,7 @@ def open_campus_navigator(master: tk.Tk) -> None:
 
     canvas = tk.Canvas(content, bg=COLORS["bg_dark"], borderwidth=0, highlightthickness=0)
     canvas.pack(expand=True, fill='both')
-
+    info_text = canvas.create_text(700, 25, text = "None", fill=COLORS["text_primary"])
     #finding unique edges
     for start in range(0, len(B.buildings_list)):
         start_list = B.buildings_list[start]
@@ -210,15 +246,15 @@ def open_campus_navigator(master: tk.Tk) -> None:
         node_names.append(canvas.create_text(0,0, text=B.Buildings(i+1).name))
     #putting click events on nodes
     for node in building_nodes:
-        canvas.tag_bind(node, "<Button-1>", lambda event, id=node: oval_on_left_click(id, building_nodes, start_and_end, canvas))
-        canvas.tag_bind(node, "<Button-3>", lambda event, id=node: oval_on_right_click(id, building_nodes, start_and_end, canvas))
-    #using make positions and sizes change when window size does
-    canvas.bind("<Configure>", lambda event: on_resize(building_nodes, building_node_locations, edges, weights, node_names, canvas, event))
+        canvas.tag_bind(node, "<Button-1>", lambda event, id=node: oval_on_left_click(id, building_nodes, info_text, start_and_end, canvas))
+        canvas.tag_bind(node, "<Button-3>", lambda event, id=node: oval_on_right_click(id, building_nodes, info_text, start_and_end, canvas))
+    #make positions and sizes change when window size does
+    canvas.bind("<Configure>", lambda event: on_resize(building_nodes, building_node_locations, edges, weights, node_names, info_text, canvas, event))
     #function buttons
-    buttonPrim = tk.Button(header, text="Prim", command= lambda: Prim(canvas, edges, start_and_end))
-    buttonBFS = tk.Button(header, text="BFS", command= lambda: BFS(canvas, edges, start_and_end))
-    buttonDFS = tk.Button(header, text="DFS", command= lambda: DFS(canvas, edges, start_and_end))
-    buttonDijkstra = tk.Button(header, text="Dijkstra", command= lambda: Dijkstra(canvas, edges, start_and_end))
+    buttonPrim = tk.Button(header, text="Prim", command= lambda: Prim(canvas, edges, info_text, start_and_end))
+    buttonBFS = tk.Button(header, text="BFS", command= lambda: BFS(canvas, edges, info_text, start_and_end))
+    buttonDFS = tk.Button(header, text="DFS", command= lambda: DFS(canvas, edges, info_text, master, start_and_end))
+    buttonDijkstra = tk.Button(header, text="Dijkstra", command= lambda: Dijkstra(canvas, edges, info_text, start_and_end))
     buttonDFS.pack(side=tk.LEFT)
     buttonPrim.pack(side=tk.LEFT)
     buttonBFS.pack(side=tk.LEFT)
