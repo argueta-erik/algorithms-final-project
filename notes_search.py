@@ -1,19 +1,9 @@
 # notes_search.py
-# ─────────────────────────────────────────────────────────────────────────────
-# CAMPUS APP – Notes Search Module
-# ─────────────────────────────────────────────────────────────────────────────
-# Features:
-#   • Upload documents: PDF, DOCX, TXT
-#   • Search using Naive, KMP, or Rabin-Karp algorithms
-#   • Algorithm Comparison Mode: run all three and compare timings + matches
-# ─────────────────────────────────────────────────────────────────────────────
-
 import tkinter as tk
 from tkinter import filedialog, messagebox, ttk
 import time
 import os
 
-# ── Optional third-party imports ─────────────────────────────────────────────
 try:
     import fitz  # PyMuPDF
     PDF_SUPPORT = True
@@ -146,9 +136,9 @@ def kmp_search(text, pattern):
 
 
 
-# ══════════════════════════════════════════════════════════════════════════════
+# ========================================
 #  DOCUMENT READER
-# ══════════════════════════════════════════════════════════════════════════════
+# ========================================
 
 def read_document(filepath: str) -> str:
     """Extract plain text from .txt, .pdf, or .docx files."""
@@ -179,9 +169,9 @@ def read_document(filepath: str) -> str:
     raise ValueError(f"Unsupported file type: {ext}")
 
 
-# ══════════════════════════════════════════════════════════════════════════════
+# ========================================
 #  MAIN MODULE WINDOW
-# ══════════════════════════════════════════════════════════════════════════════
+# ========================================
 
 def open_notes_search(master: tk.Tk) -> None:
     """Open the Notes Search module in a new Toplevel window."""
