@@ -1,0 +1,33 @@
+Polynomial Time  vs Non-Polynomial Time
+
+Campus-Navigator
+BFS vs. DFS
+Both are in Polynomial time becaue each vertext and edge is visited at most once. 
+
+Dijkstra's Shortest Path
+This is in Polynomial time because it finds the shortest path when edge weights are nonnegative
+
+Prim's MST
+This is in Polynomial Time as it connects the campus noes with a minimum total path cost.
+
+
+
+Study Planner
+Greedy Scheduling
+Plenty of scheduling problems can be solved in Polynomial time when the goal is simple.
+
+DP 0/1 Knapsack
+[...]
+
+
+
+Notes Search
+Naive String Search 
+While less efficient, it is still in Polynomial time.
+
+Rabin-Karp
+In Polynomial time
+
+
+KMP 
+In Polynomial and it avoids unnecessary repeated comparisons due to  
