@@ -77,7 +77,7 @@ def rabin_karp_search(text, pattern):
     for i in range(n - m + 1):
         comparisons += 1
         if pattern_hash == window_hash:
-            if text[i:i + m] == pattern:   # verify (spurious-hit guard)
+            if text[i:i + m] == pattern:
                 matches.append(i)
         if i < n - m:
             window_hash = (d * (window_hash - ord(text[i]) * h) + ord(text[i + m])) % q
@@ -446,7 +446,7 @@ def open_notes_search(master: tk.Tk) -> None:
             preview_text.tag_add("highlight", start, end)
         preview_text.config(state="disabled")
 
-    # ── Core search runner ────────────────────────────────────────────────────
+    #  Core search runner and Safe-Guarding
     def _run_search():
         text    = doc_text.get()
         pattern = search_entry.get().strip()
