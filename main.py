@@ -30,7 +30,7 @@ class MainMenu(tk.Frame):
 
         make_label(
             hero,
-            text="Welcome to CampusApp",
+            text="Welcome to TitanCampus Assistant",
             style="title",
             fg=COLORS["text_primary"],
         ).pack()

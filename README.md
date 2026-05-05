@@ -1,89 +1,34 @@
-Dear Students,  
+# CSUF Maze Solver Project
 
- 
+## Team Members & Roles
+- **Erik Argueuta – Notes Search Module & Algorithm Information Module**  
+  Using Dr. Shah's lecture notes, implemented Naive, Rabin-Karp, and KMP string search algorithms; compiled information into the Algorithm Info module.
 
-Your Final Project for CPSC 335 is now officially released. This is an individual assignment designed to help you apply every major algorithmic concept learned throughout the semester into a single, interactive Python application.  
+- **Zhi Chong – Study Planner**  
+  Implemented Greedy algorithm, Dynamic Programming 0/1 Knapsack algorithms for the Study Planner module
 
- 
+- **Jacob Kwiat - Camps Navigator**  
+  Using Dr. Shah's lecture notes, implemented 
 
-You will build:  
+---
 
-TitanCampus Algorithmic Assistant (TCAA):  
-A full-featured Python GUI application demonstrating Graph Algorithms, Dynamic Programming, Greedy Scheduling, String Pattern Matching, and Algorithm Analysis.  
- 
+# 1. Overview
+This application is a **CampusApp** that provides the Campus Navigator, Study Planner, Notes Search, and Algorithm Info modules.
 
-To help you succeed, I have prepared a complete instruction document that includes:  
+---
 
-	- Project overview
+# Requirements
+- Python **3.10 or higher**
+- **Tkinter** (included with most Python installations)
+- This is also displayed under the **requirements.txt**
 
-	- Full list of required modules
+---
 
-	- Technology requirements
+## Instructions
 
-	- Deliverables
+1. Navigate to the project root directory.
 
-	- Presentation guidelines
+2. Run the program:
 
-	- In-class demo expectations
-
-	- Detailed grading rubric (50 points total)
-
-
-Your project must include the following GUI modules:  
-
- 
-
-1. Campus Navigator (Graphs)
-	- BFS Path
-	- DFS + Connectivity
-	- Dijkstra Shortest Path (heap)
-	- Prim’s MST
-
-2. Study Planner
-	- Greedy Scheduling
-	- DP 0/1 Knapsack 
-
-3. Notes Search Engine
-	- Document upload: PDF / DOCX / TXT
-	- Naive, Rabin–Karp, KMP search
-	- Algorithm comparison mode
-
-4. Algorithm Info
-	- Time complexities
-	- P vs NP reflection
-
-	Required Deliverables  
-	Each student submits:
-		- ZIP file containing all .py code and README
-		- PPTX presentation (max 10 slides)
-
-5. Live demonstration during class
-
-	You will walk me through your GUI  
-
-	Explain your code, algorithms, and design choices  
-
-	Grading Rubric (50 points)  
-		- 20 pts – Functional correctness of all modules
-		- 10 pts – Code quality and structure
-		- 5 pts – Presentation
-		- 15 pts – In-class live demo performance
-
-Timeline & Suggestions  
-You have two full weeks to complete this project.  
-
-Please start early—GUI + algorithms + testing takes time.  
-
-I strongly recommend:
-
-	* Breaking development into modules
-	* Testing each algorithm separately
-	* Keeping your GUI simple, clean, and responsive
-	* Preparing your slides and report in parallel   
-
-If you have questions or need clarification, feel free to message me on Canvas or ask during office hours.  
-
-Good luck—and I’m excited to see your creativity and engineering skills in action!  
-
-
-Dr. Shah
+```bash
+python main.py
