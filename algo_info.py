@@ -1,16 +1,6 @@
-# algo_info.py
-# ─────────────────────────────────────────────────────────────────────────────
-# CAMPUS APP – Algorithm Info Module
-# Displays time/space complexity tables for each campus app module.
-# ─────────────────────────────────────────────────────────────────────────────
-
 import tkinter as tk
 from util import COLORS, FONTS, PADDING, configure_window, make_label
 
-
-# ══════════════════════════════════════════════════════════════════════════════
-#  DATA: algorithm complexity tables per module
-# ══════════════════════════════════════════════════════════════════════════════
 
 MODULE_DATA = {
     "Campus Navigator": {
@@ -88,7 +78,6 @@ FONT_NOTE         = ("TkDefaultFont", 8)
 # ══════════════════════════════════════════════════════════════════════════════
 
 def open_algo_info(master: tk.Tk) -> None:
-    """Open the Algorithm Info module in a new Toplevel window."""
 
     win = tk.Toplevel(master)
     configure_window(win, title="Algorithm Info", width=860, height=620)
@@ -112,11 +101,11 @@ def open_algo_info(master: tk.Tk) -> None:
         cursor="hand2", command=win.destroy,
     ).pack(side="right", padx=PADDING["section"])
 
-    # ── Body ──────────────────────────────────────────────────────────────────
+    # Body 
     body = tk.Frame(win, bg=COLORS["bg_dark"])
     body.pack(fill="both", expand=True)
 
-    # ── Left: module selector ─────────────────────────────────────────────────
+    # Left: module selector 
     sidebar = tk.Frame(body, bg=COLORS["bg_panel"], width=220)
     sidebar.pack(side="left", fill="y")
     sidebar.pack_propagate(False)
@@ -127,7 +116,7 @@ def open_algo_info(master: tk.Tk) -> None:
         fg=COLORS["text_secondary"], anchor="w",
     ).pack(fill="x", padx=14, pady=(18, 6))
 
-    # ── Right: content area ───────────────────────────────────────────────────
+    # Right: content area 
     right = tk.Frame(body, bg=COLORS["bg_dark"])
     right.pack(side="left", fill="both", expand=True)
 
@@ -183,7 +172,7 @@ def open_algo_info(master: tk.Tk) -> None:
             fg=COLORS["text_secondary"], anchor="w", wraplength=580, justify="left",
         ).pack(fill="x", pady=(0, 14))
 
-        # ── Complexity table ──────────────────────────────────────────────────
+        # Complexity table 
         table_frame = tk.Frame(detail, bg=COLORS["bg_dark"])
         table_frame.pack(fill="x")
 
@@ -218,7 +207,7 @@ def open_algo_info(master: tk.Tk) -> None:
         for c in range(1, len(columns)):
             table_frame.columnconfigure(c, weight=1)
 
-        # ── Notes ─────────────────────────────────────────────────────────────
+        # Notes 
         notes_frame = tk.Frame(detail, bg=COLORS["bg_panel"])
         notes_frame.pack(fill="x", pady=(18, 0))
 
@@ -237,7 +226,7 @@ def open_algo_info(master: tk.Tk) -> None:
 
         tk.Frame(notes_frame, bg=COLORS["bg_panel"], height=8).pack()
 
-    # ── Build sidebar buttons ─────────────────────────────────────────────────
+    # Build sidebar buttons 
     sidebar_buttons = []
     for module_name in MODULE_DATA:
         btn = tk.Button(
@@ -252,11 +241,11 @@ def open_algo_info(master: tk.Tk) -> None:
         btn.pack(fill="x", pady=2)
         sidebar_buttons.append(btn)
 
-    # Bind each button after all are created (so btn_ref closure is correct)
+    # Bind each button after all are created allows btn_ref closure is correct
     for btn, module_name in zip(sidebar_buttons, MODULE_DATA):
         btn.config(command=lambda n=module_name, b=btn: _show_module(n, b))
 
-    # ── Divider line between sidebar and content ──────────────────────────────
+    #  Divider line between sidebar and content 
     tk.Frame(body, bg=COLORS["bg_panel"], width=1).place(
         in_=sidebar, relx=1.0, rely=0, relheight=1.0
     )
