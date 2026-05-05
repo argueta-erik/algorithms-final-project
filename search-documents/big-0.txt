@@ -1,0 +1,45 @@
+Notes: No in-person class Tuesday (2/10/26); maybe Zoom lecture
+
+Why Big O Matters: Cost of Algos
+- Same problem, different algorithm = vastly different runtime
+- 1 billion operations $\approx$ 1 second on modern CPU
+- n = 1 million: O(n) = instant, O($n^2$) = 17 minutes, O($2^n$) = impossible
+- Choosing the right complexity can be the difference between a working system and a crashed server
+
+Complexity Growth: How Bad is Each Class?
+![[Pasted image 20260218092713.png]]
+
+O(1): Constant Time - Always Fast
+- Same number of operations regardless of input size
+- **Examples:** array index lookup, hash table lookup, dictionary access
+- ***ALWAYS USE WHEN AVAILABLE***
+
+O(n): Linear Time - Look at Every Element
+- Operations scale directly with input size
+- **EXAMPLES:** Linear Search, finding max/min, traversing a list
+- If n doubles, time roughly doubles
+- ***Acceptable for n up to $\approx$ 100 million****
+
+O(log n): Logarithmic - Divide & Conquer
+- Cut problem size in half each step
+- **Examples:** Binary Search on *sorted array*, balance BST lookup
+- For n = 1 billion: only $\approx$ 30 iterations!
+- ***Excellent scaling for massive datasets***
+
+O(n log n): Linearithmic - Fast Sorting
+- Slightly worse than linear, but vastly better than quadratic
+- **Examples:** *Merge Sort, Quicksort (average), heapsort*
+- Python's built-in: uses Timesort: O(n log n)
+- At n = 1M: $\approx$ 20 million operations (fast!)
+- ***Industry standard for sorting & divide-and-conquer***
+
+
+O(n^2): Quadratic - Nested Loops
+- For each element, examine all elements (nested loop)
+- **Examples:** *Bubble Sort, Selection Sort, naive nested iteration*
+- At n = 10K: 100 million ops. At n = 1M: catastrophic
+- Code: nested and
+- ***Avoid at all costs for large datasets***
+
+O(2^n) & O(n!): Exponential -- Game Over
+- O($2^n$): doubles 

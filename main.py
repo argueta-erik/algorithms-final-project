@@ -35,7 +35,7 @@ from study_planner import open_study_planner
 # TEAM HOOK – Notes Search
 # Uncomment and adjust once notes_search.py is ready.
 # ---------------------------------------------------------------------------
-# from notes_search import open_notes_search
+from notes_search import open_notes_search
 
 
 # ---------------------------------------------------------------------------
@@ -99,7 +99,7 @@ class MainMenu(tk.Frame):
         buttons = [
             ("Campus Navigator",  lambda: _stub("campus_navigator")),
             ("Study Planner",      lambda: open_study_planner(self.master)),
-            ("Notes Search",       lambda: _stub("notes_search")),
+            ("Notes Search",       lambda: open_notes_search(self.master)),
         ]
 
         for label, cmd in buttons:
