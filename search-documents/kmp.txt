@@ -1,0 +1,24 @@
+Overview of Knuth-Morris-Pratt (KMP)
+- The Knuth-Morris-Pratt (KMP) algo is a pattern-matching algo; it finds all occurrences of a pattern P of length p in a text T of length t
+- Takes advantage of failure function f on the pattern P to search in linear time O(p + t)!
+	- General Idea: After viewing character in T once, we should already by able to tell whether the pattern could start there, even if we never explicitly attempted to match $P_1$ directly to $T_j$
+- We've already seen the algo and pseudocode for constructing the failure function, so we'll focus on KMP here using a similar example.
+
+Definitions
+- Inputs:
+	- Text T, indexed by j from 1 to *t*
+	- Pattern P, indexed by *i* from 1 to *p*
+- Output:
+	- A list of positions k, where T_{k : k+p} = p
+- Failure function, f
+	- A table of p entries, where each entry f(i) is the length of the longest proper suffix P_{1 : i} which is also a proper prefix of P
+	- See previous slide deck for a more detailed expression
+
+The Algorithm
+1. Calculate the failure function f for the pattern P
+2. Construct a skeleton DFA which accepts P and includes transitions based on f
+3. Initialize the skeleton DFA to state 0 and the T pointer to 1
+4. Iterate through text T
+
+
+REFER TO THE WEEK 13 SLIDES FOR NEATER BREAKDOWN!
