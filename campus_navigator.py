@@ -1,22 +1,4 @@
 # module_template.py
-# ─────────────────────────────────────────────────────────────────────────────
-# CAMPUS APP – Module Template
-# ─────────────────────────────────────────────────────────────────────────────
-# Instructions for your team:
-#
-#  1. Copy this file and rename it to match your module, e.g.:
-#       campus_navigator.py  /  study_planner.py  /  notes_search.py
-#
-#  2. Implement your UI inside the open_<module>() function below.
-#     It receives the root Tk window as `master` so you can open a
-#     Toplevel window, replace the current frame, or do whatever fits best.
-#
-#  3. In main.py:
-#       a. Uncomment the matching import line  (search "TEAM HOOK")
-#       b. Replace the matching lambda: _stub(...) with your function call
-#
-#  4. All colours, fonts, and helpers live in util.py – use them!
-# ─────────────────────────────────────────────────────────────────────────────
 
 import tkinter as tk
 from tkinter import ttk
