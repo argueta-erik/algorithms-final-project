@@ -5,10 +5,10 @@
   Using Dr. Shah's lecture notes, implemented Naive, Rabin-Karp, and KMP string search algorithms; compiled information into the Algorithm Info module.
 
 - **Zhi Chong – Study Planner**  
-  Implemented Greedy algorithm, Dynamic Programming 0/1 Knapsack algorithms for the Study Planner module
+  Implemented Greedy algorithm, Dynamic Programming 0/1 Knapsack algorithms for the Study Planner module.
 
 - **Jacob Kwiat - Camps Navigator**  
-  Using Dr. Shah's lecture notes, implemented 
+  Using Dr. Shah's lecture notes, implemented BFS, DFS, Dijkstra's Shortest Path, and Prim's MST.
 
 ---
 
